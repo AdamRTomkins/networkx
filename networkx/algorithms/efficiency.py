@@ -18,7 +18,7 @@ __all__ = ['efficiency', 'local_efficiency', 'global_efficiency']
 
 
 @not_implemented_for('directed')
-def efficiency(G, u, v):
+def efficiency(G, u, v,weight=None):
     """Returns the efficiency of a pair of nodes in a graph.
 
     The *efficiency* of a pair of nodes is the multiplicative inverse of the
@@ -38,7 +38,8 @@ def efficiency(G, u, v):
 
     Notes
     -----
-    Edge weights are ignored when computing the shortest path distances.
+    Edge weights are ignored when computing the shortest path distances
+    unless specified with the weight keyword.
 
     See also
     --------
@@ -53,11 +54,11 @@ def efficiency(G, u, v):
            <http://dx.doi.org/10.1103/PhysRevLett.87.198701>
 
     """
-    return 1 / nx.shortest_path_length(G, u, v)
+    return 1 / nx.shortest_path_length(G, u, v,weight=weight)
 
 
 @not_implemented_for('directed')
-def global_efficiency(G):
+def global_efficiency(G,weight=None):
     """Returns the average global efficiency of the graph.
 
     The *efficiency* of a pair of nodes in a graph is the multiplicative
@@ -97,7 +98,7 @@ def global_efficiency(G):
     # path lengths in parallel.
     #
     # TODO This summation can be trivially parallelized.
-    return sum(efficiency(G, u, v) for u, v in permutations(G, 2)) / denom
+    return sum(efficiency(G, u, v,weight=weight) for u, v in permutations(G, 2)) / denom
 
 
 @not_implemented_for('directed')
