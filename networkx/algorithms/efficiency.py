@@ -18,7 +18,7 @@ __all__ = ['efficiency', 'local_efficiency', 'global_efficiency']
 
 
 @not_implemented_for('directed')
-def efficiency(G, u, v,weight=None):
+def efficiency(G, u, v, weight=None):
     """Returns the efficiency of a pair of nodes in a graph.
 
     The *efficiency* of a pair of nodes is the multiplicative inverse of the
@@ -30,16 +30,16 @@ def efficiency(G, u, v,weight=None):
         An undirected graph for which to compute the average local efficiency.
     u, v : node
         Nodes in the graph ``G``.
+    weight : string or None, optional (default=None)
+       The edge attribute that holds the numerical value used as a weight.
+       If None, then each edge has weight 1.
+
+
 
     Returns
     -------
     float
         Multiplicative inverse of the shortest path distance between the nodes.
-
-    Notes
-    -----
-    Edge weights are ignored when computing the shortest path distances
-    unless specified with the weight keyword.
 
     See also
     --------
@@ -54,11 +54,11 @@ def efficiency(G, u, v,weight=None):
            <http://dx.doi.org/10.1103/PhysRevLett.87.198701>
 
     """
-    return 1 / nx.shortest_path_length(G, u, v,weight=weight)
+    return 1 / nx.shortest_path_length(G, u, v, weight=weight)
 
 
 @not_implemented_for('directed')
-def global_efficiency(G,weight=None):
+def global_efficiency(G, weight=None):
     """Returns the average global efficiency of the graph.
 
     The *efficiency* of a pair of nodes in a graph is the multiplicative
@@ -70,15 +70,15 @@ def global_efficiency(G,weight=None):
     ----------
     G : :class:`networkx.Graph`
         An undirected graph for which to compute the average global efficiency.
+    weight : string or None, optional (default=None)
+       The edge attribute that holds the numerical value used as a weight.
+       If None, then each edge has weight 1.
+
 
     Returns
     -------
     float
         The average global efficiency of the graph.
-
-    Notes
-    -----
-    Edge weights are ignored when computing the shortest path distances.
 
     See also
     --------
@@ -98,11 +98,11 @@ def global_efficiency(G,weight=None):
     # path lengths in parallel.
     #
     # TODO This summation can be trivially parallelized.
-    return sum(efficiency(G, u, v,weight=weight) for u, v in permutations(G, 2)) / denom
+    return sum(efficiency(G, u, v, weight=weight) for u, v in permutations(G, 2)) / denom
 
 
 @not_implemented_for('directed')
-def local_efficiency(G):
+def local_efficiency(G, weight=None):
     """Returns the average local efficiency of the graph.
 
     The *efficiency* of a pair of nodes in a graph is the multiplicative
@@ -115,15 +115,14 @@ def local_efficiency(G):
     ----------
     G : :class:`networkx.Graph`
         An undirected graph for which to compute the average local efficiency.
+    weight : string or None, optional (default=None)
+       The edge attribute that holds the numerical value used as a weight.
+       If None, then each edge has weight 1.
 
     Returns
     -------
     float
         The average local efficiency of the graph.
-
-    Notes
-    -----
-    Edge weights are ignored when computing the shortest path distances.
 
     See also
     --------
@@ -138,4 +137,4 @@ def local_efficiency(G):
 
     """
     # TODO This summation can be trivially parallelized.
-    return sum(global_efficiency(nx.ego_graph(G, v)) for v in G) / len(G)
+    return sum(global_efficiency(nx.ego_graph(G, v, weight=weight)) for v in G) / len(G)
